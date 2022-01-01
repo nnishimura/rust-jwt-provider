@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 use uuid::Uuid;
 
-use crate::error::ServiceError;
+use crate::service::error::ServiceError;
 
 pub async fn token_introspect(
     token: &str,

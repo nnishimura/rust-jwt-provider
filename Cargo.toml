@@ -1,6 +1,37 @@
-[workspace]
+[package]
+name = "api"
+version = "0.0.1"
+authors = ["nnishimura <naoko.nishimura1018@gmail.com>"]
+edition = "2018"
 
-members = [
-    "service",
-    "api"
-]
+[dependencies]
+actix-web = "3"
+serde_json = "1.0"
+dotenv = "0.15.0"
+jsonwebtoken = "7.2.0"
+chrono = { version = "^0.4", features = ["serde"] }
+uuid = { version = "^0.6", features = ["v4", "serde"] } # dont use latest v0.8 as it breaks diesel uuid support
+derive_more = "0.99"
+
+[dependencies.diesel]
+version = "1.4"
+features = ["postgres", "r2d2", "chrono", "uuid", "serde_json"]
+
+
+[dependencies.log]
+version = "0.4"
+
+[dependencies.futures]
+version = "0.3"
+
+[dependencies.serde]
+version = "1.0"
+features = ["derive"]
+
+[dependencies.reqwest]
+version = "0.11"
+features = ["json"]
+
+[dependencies.tokio]
+version = "1.3"
+features = ["full"]

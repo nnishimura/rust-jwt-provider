@@ -13,4 +13,4 @@ Cargo.lock
 .env
 
 ## temporary ignore TODO files
-service/src/token_validation.rs
+src/service/token_validation.rs

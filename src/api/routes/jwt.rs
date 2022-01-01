@@ -1,12 +1,23 @@
-use crate::routes::error::APIErrorResponse;
-use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
-use futures::future::{ready, Ready};
+use crate::api::routes::error::APIErrorResponse;
+use crate::service::introspect::token_introspect;
+use crate::service::issue::issue_token;
+use actix_web::{web, Responder};
 use log::{debug, error, info, log_enabled, Level};
 use serde::{Deserialize, Serialize};
-use service::introspect::token_introspect;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct IntrospectRequest {
+    token: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct IssueRequest {
+    refresh_token: Option<String>,
+    application_id: String, // e.g. mywebappId
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct IssueResponse {
     token: String,
 }
 
@@ -32,6 +43,12 @@ pub struct JwtIntrospectResponse {
     // pub aud: Option<String>,
     // pub iss: Option<String>,
     // pub jti: Option<String>,
+}
+
+#[post("/jwt/issue")]
+pub async fn issue(input: web::Json<IssueRequest>) -> impl Responder {
+    let token = issue_token("test").await.unwrap();
+    web::Json(IssueResponse { token })
 }
 
 #[post("/jwt/introspect")]
