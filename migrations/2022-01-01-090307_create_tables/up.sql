@@ -1,4 +1,4 @@
---- namespace for jwt (e.g. companya-sso)
+--- namespace for jwt
 CREATE TABLE tenants (
   id uuid PRIMARY KEY DEFAULT extension.gen_random_uuid(), --- key to encode jwt. TODO: generate unique jwks per each tenant
   tenant_name character varying(100) NOT NULL, ---- user friendly unique name
@@ -11,7 +11,7 @@ CREATE TABLE tenants (
   modified_datetime timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
----- app client (e.g. my.webapp.com)
+---- registered app client for jwt
 CREATE TABLE clients (
   id uuid PRIMARY KEY DEFAULT extension.gen_random_uuid(), --- this will be used as audience claim as well
   tenant_id uuid REFERENCES tenants (id) NOT NULL,
