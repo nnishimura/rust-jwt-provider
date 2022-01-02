@@ -13,6 +13,7 @@ use uuid::Uuid;
 pub struct AccessToken {
     pub id: Uuid,
     pub client_id: Uuid,
+    pub active: bool,
     pub attributes: Option<Value>,
     pub created_datetime: NaiveDateTime,
     pub modified_datetime: NaiveDateTime,
@@ -23,6 +24,7 @@ pub struct AccessToken {
 pub struct NewAccessToken {
     pub client_id: Uuid,
     pub attributes: Option<Value>,
+    pub active: bool,
 }
 
 pub fn create_access_token(

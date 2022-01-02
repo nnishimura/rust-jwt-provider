@@ -12,6 +12,7 @@ use uuid::Uuid;
 pub struct RefreshToken {
     pub id: Uuid,
     pub client_id: Uuid,
+    pub active: bool,
     pub created_datetime: NaiveDateTime,
     pub modified_datetime: NaiveDateTime,
 }
@@ -20,6 +21,7 @@ pub struct RefreshToken {
 #[table_name = "refresh_tokens"]
 pub struct NewRefreshToken {
     pub client_id: Uuid,
+    pub active: bool,
 }
 
 pub fn create_refresh_token(

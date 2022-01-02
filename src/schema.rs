@@ -45,4 +45,9 @@ joinable!(access_tokens -> clients (client_id));
 joinable!(clients -> tenants (tenant_id));
 joinable!(refresh_tokens -> clients (client_id));
 
-allow_tables_to_appear_in_same_query!(access_tokens, clients, refresh_tokens, tenants,);
+allow_tables_to_appear_in_same_query!(
+    access_tokens,
+    clients,
+    refresh_tokens,
+    tenants,
+);

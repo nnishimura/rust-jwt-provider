@@ -14,3 +14,5 @@ Cargo.lock
 
 ## temporary ignore TODO files
 src/service/token_validation.rs
+jwt.key
+jwt.key.pub

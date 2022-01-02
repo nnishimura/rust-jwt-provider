@@ -1,7 +1,8 @@
-use crate::api::routes::error::APIErrorResponse;
+use crate::api::routes::error::AppError;
 use crate::service::introspect::token_introspect;
 use crate::service::issue::issue_token;
-use actix_web::{web, Responder};
+use crate::AppState;
+use actix_web::web;
 use log::{debug, error, info, log_enabled, Level};
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +14,7 @@ pub struct IntrospectRequest {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct IssueRequest {
     refresh_token: Option<String>,
-    application_id: String, // e.g. mywebappId
+    client_name: String, // mywebapp.com
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -46,14 +47,22 @@ pub struct JwtIntrospectResponse {
 }
 
 #[post("/jwt/issue")]
-pub async fn issue(input: web::Json<IssueRequest>) -> impl Responder {
-    let token = issue_token("test").await.unwrap();
-    web::Json(IssueResponse { token })
+pub async fn issue(
+    data: web::Data<AppState>,
+    input: web::Json<IssueRequest>,
+) -> Result<web::Json<IssueResponse>, AppError> {
+    let pool = &data.pool;
+    let conn = pool.get().map_err(|e| AppError::DBError(e.to_string()))?;
+
+    let token = issue_token(&input.0, &conn).await.unwrap();
+    Ok(web::Json(IssueResponse { token }))
 }
 
 #[post("/jwt/introspect")]
-pub async fn introspect(input: web::Json<IntrospectRequest>) -> impl Responder {
-    web::Json(JwtIntrospectResponse { active: true })
+pub async fn introspect(
+    input: web::Json<IntrospectRequest>,
+) -> Result<web::Json<JwtIntrospectResponse>, AppError> {
+    Ok(web::Json(JwtIntrospectResponse { active: true }))
 }
 
 // impl From<ServiceIntrospectResponse> for TokenIntrospectResponse {

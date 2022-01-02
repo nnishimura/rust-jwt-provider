@@ -11,6 +11,7 @@ mod service;
 
 use crate::api::routes::client::create_client;
 use crate::api::routes::jwt::{introspect, issue};
+use crate::api::routes::tenant::create_tenant;
 use crate::db::create_pool;
 use actix_web::{App, HttpResponse, HttpServer, Responder};
 use diesel::pg::PgConnection;
@@ -29,6 +30,7 @@ pub struct AppState {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+    env_logger::init();
 
     HttpServer::new(|| {
         App::new()
@@ -36,6 +38,7 @@ async fn main() -> std::io::Result<()> {
                 pool: create_pool(),
             })
             .service(healthcheck)
+            .service(create_tenant)
             .service(introspect)
             .service(issue)
             .service(create_client)

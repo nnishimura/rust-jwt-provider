@@ -1,9 +1,22 @@
+--- namespace for jwt (e.g. companya-sso)
+CREATE TABLE tenants (
+  id uuid PRIMARY KEY DEFAULT extension.gen_random_uuid(), --- key to encode jwt. TODO: generate unique jwks per each tenant
+  tenant_name character varying(100) NOT NULL, ---- user friendly unique name
+  issuer character varying(100) UNIQUE NOT NULL,
+
+  access_token_ttl integer NOT NULL,
+  refresh_token_ttl integer NOT NULL,
+
+  created_datetime  timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  modified_datetime timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+---- app client (e.g. my.webapp.com)
 CREATE TABLE clients (
-  id uuid PRIMARY KEY DEFAULT extension.gen_random_uuid(),
+  id uuid PRIMARY KEY DEFAULT extension.gen_random_uuid(), --- this will be used as audience claim as well
+  tenant_id uuid REFERENCES tenants (id) NOT NULL,
   client_name character varying(100) UNIQUE NOT NULL, ---- user friendly unique client ID
-  audience jsonb NOT NULL, --- array of expected audience. [applicationClientId1, applicationClientId2]
-  jwks jsonb,
---   jwks_url TEXT,
+  --   jwks_url TEXT, TODO
 
   created_datetime  timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
   modified_datetime timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -25,6 +38,12 @@ CREATE TABLE refresh_tokens (
   created_datetime  timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
   modified_datetime timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+CREATE TRIGGER tenant_modified_datetime
+    BEFORE UPDATE
+    ON tenants
+    FOR EACH ROW
+EXECUTE PROCEDURE update_modified_datetime();
 
 CREATE TRIGGER client_modified_datetime
     BEFORE UPDATE
