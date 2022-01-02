@@ -1,5 +1,5 @@
 use crate::db::schema::tenants;
-use crate::db::schema::tenants::dsl::{id, tenant_name, tenants as tenant_table};
+use crate::db::schema::tenants::dsl::{id, issuer, tenants as tenant_table};
 use chrono::NaiveDateTime;
 use diesel::result::Error as DieselError;
 use diesel::*;
@@ -42,9 +42,9 @@ pub fn get_tenant_by_id(tenant_id: &Uuid, conn: &PgConnection) -> Result<Tenant,
         .map_err(Into::into)
 }
 
-pub fn get_tenant_by_name(cn: &str, conn: &PgConnection) -> Result<Tenant, DieselError> {
+pub fn get_tenant_by_issuer(iss: &str, conn: &PgConnection) -> Result<Tenant, DieselError> {
     tenant_table
-        .filter(tenant_name.eq(cn))
+        .filter(issuer.eq(iss))
         .get_result::<Tenant>(conn)
         .map_err(Into::into)
 }

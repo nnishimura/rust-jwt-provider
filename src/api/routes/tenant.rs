@@ -1,9 +1,9 @@
 use crate::db::tenant::create_tenant as create_new_tenant;
 use crate::db::tenant::{NewTenant, Tenant};
 use crate::{api::routes::error::AppError, AppState};
-use actix_web::{web, Responder};
+use actix_web::web;
 use chrono::NaiveDateTime;
-use log::{debug, error, info, log_enabled, Level};
+use log::info;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

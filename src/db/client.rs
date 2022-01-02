@@ -1,5 +1,5 @@
 use crate::db::schema::clients;
-use crate::db::schema::clients::dsl::{client_name, clients as client_table, id};
+use crate::db::schema::clients::dsl::{client_name, clients as client_table};
 use chrono::NaiveDateTime;
 use diesel::result::Error as DieselError;
 use diesel::*;
@@ -27,13 +27,6 @@ pub struct NewClient {
 pub fn create_client(new_client: &NewClient, conn: &PgConnection) -> Result<Client, DieselError> {
     diesel::insert_into(client_table)
         .values(new_client)
-        .get_result::<Client>(conn)
-        .map_err(Into::into)
-}
-
-pub fn get_client_by_id(client_id: &Uuid, conn: &PgConnection) -> Result<Client, DieselError> {
-    client_table
-        .filter(id.eq(client_id))
         .get_result::<Client>(conn)
         .map_err(Into::into)
 }

@@ -1,5 +1,5 @@
 use crate::db::schema::access_tokens;
-use crate::db::schema::access_tokens::dsl::access_tokens as access_tokens_table;
+use crate::db::schema::access_tokens::dsl::{access_tokens as access_tokens_table, client_id};
 use chrono::NaiveDateTime;
 use diesel::result::Error as DieselError;
 use diesel::*;
@@ -35,4 +35,10 @@ pub fn create_access_token(
         .values(new_access_token)
         .get_result::<AccessToken>(conn)
         .map_err(Into::into)
+}
+
+pub fn mark_as_inactive_by_client(ci: &Uuid, conn: &PgConnection) -> Result<usize, DieselError> {
+    diesel::update(access_tokens_table.filter(client_id.eq(ci)))
+        .set(access_tokens::active.eq(false))
+        .execute(&*conn)
 }
